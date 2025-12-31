@@ -7,7 +7,7 @@ declare global {
         interface Request {
             user? : JwtPayload
         }
-    }
+    } 
 }
 
 const auth = (roles?: Role[]) => {
@@ -27,7 +27,13 @@ const auth = (roles?: Role[]) => {
                 })
             }
             req.user = decoded as JwtPayload;
-            
+
+            if(roles && !roles.includes(req.user.role as Role)){
+                return res.status(403).json({
+                    message: "Forbidden Access"
+                })
+            }
+
             next();
         } catch (error: any) {
             return res.status(500).json({

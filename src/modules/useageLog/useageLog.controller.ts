@@ -35,7 +35,34 @@ const getUseageLog = async (req: Request, res: Response) => {
     }
 }
 
+const updateUseageLog = async (req: Request, res: Response) => {
+    const {id } = req.params; 
+    if(!id){
+        return res.status(400).json({
+            message : "Usage log id is required"
+        })
+    }
+    try {
+        const log = await prisma.usageLog.update({
+            where : {id}, 
+            data : {
+                endTime : new Date()
+            }
+        })
+        res.status(200).json({
+            message : "Usage log updated successfully",
+            data : log
+        })
+    } catch (error : any) {
+        res.status(500).json({
+            message : "Internal server error",
+            error : error.message
+        })
+    }
+}
+
 export const useageLogController = {
     createUseageLog, 
     getUseageLog,
+    updateUseageLog,
 }
