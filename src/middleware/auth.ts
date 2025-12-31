@@ -1,6 +1,14 @@
 import { Request, Response, NextFunction } from "express";
 import { Role } from "../generated/prisma/enums";
-import jwt from "jsonwebtoken";
+import jwt, { JwtPayload } from "jsonwebtoken";
+
+declare global {
+    namespace Express {
+        interface Request {
+            user? : JwtPayload
+        }
+    }
+}
 
 const auth = (roles?: Role[]) => {
     return (req: Request, res: Response, next: NextFunction) => {
@@ -18,6 +26,8 @@ const auth = (roles?: Role[]) => {
                     message: "Unauthorized Access"
                 })
             }
+            req.user = decoded as JwtPayload;
+            
             next();
         } catch (error: any) {
             return res.status(500).json({
@@ -27,3 +37,5 @@ const auth = (roles?: Role[]) => {
         }
     }
 }
+
+export default auth;

@@ -2,10 +2,11 @@ import { Request, Response } from 'express';
 import { prisma } from '../../lib/prisma';
 
 const createUseageLog = async ( req: Request, res: Response ) => {
+    console.log(req.user);
     try {
         const payLoad = req.body; 
         const useageLog = await prisma.usageLog.create({
-            data : payLoad
+            data : {...payLoad, userId : req.user?.id}
         }); 
         res.status(201).json({
             message : "Usage log created successfully",
